@@ -319,17 +319,22 @@ int rbtree_erase(rbtree *t, node_t *p) {
     color = delete_node->color;
     replace_node = delete_node->right; // successor은 왼쪽 노드가 없으므로 대체 노드는 오른쪽 노드가 된다.
 
-    if(delete_node != p->right){
-      change_node(t, delete_node, delete_node->right);
-      delete_node->right = p->right;
-      delete_node->right->parent = delete_node;
-    }else{
-      replace_node->parent = delete_node;
-    }
-    change_node(t, p, delete_node);
-    delete_node->left = p->left;
-    delete_node->left->parent = delete_node;
-    delete_node->color = p->color;
+    change_node(t, delete_node, replace_node);
+    p->key = delete_node->key; // p와 delete_node의 Key값만 바꿔주고, delete_node를 삭제한다.
+    p = delete_node; // delete_node를 free하기 위해서 p에 delete_node 넣기
+
+    // clsr책의 pseudocode 방식(p와 delete_node를 아예 바꾸는 방식)
+    // if(delete_node != p->right){
+    //   change_node(t, delete_node, delete_node->right);
+    //   delete_node->right = p->right;
+    //   delete_node->right->parent = delete_node;
+    // }else{ // replace_node가 nil노드이기 때문에 parent연결해 주어야 함
+    //   replace_node->parent = delete_node;
+    // }
+    // change_node(t, p, delete_node);
+    // delete_node->left = p->left;
+    // delete_node->left->parent = delete_node;
+    // delete_node->color = p->color;
   }
 
   if(color == RBTREE_BLACK) {
